@@ -23,37 +23,49 @@
       <UniqueIdentifier>{c8fad3b0-47ba-4afc-9308-efea911968ce}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Functions">
-      <UniqueIdentifier>{fe8e22fc-ee71-41b0-8780-b968ca55d218}</UniqueIdentifier>
+      <UniqueIdentifier>{b1d599c8-df99-4b4e-8458-9184832307cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\KernFuncs">
+      <UniqueIdentifier>{6aff382b-91a3-418a-a124-5d65594da18a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="openCL.cpp">
+    <ClCompile Include="openCLHelper.cpp">
       <Filter>Source Files\OpenCLHelp</Filter>
     </ClCompile>
-    <ClCompile Include="OpenCLHelper.cpp">
-      <Filter>Source Files\OpenCLHelp</Filter>
-    </ClCompile>
-    <ClCompile Include="ConfigClass.cpp">
+    <ClCompile Include="config.cpp">
       <Filter>Source Files\Settings</Filter>
     </ClCompile>
-    <ClCompile Include="StientificFunctions.cpp">
+    <ClCompile Include="funcs.cpp">
       <Filter>Source Files\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="kernFuncs.cpp">
+      <Filter>Source Files\KernFuncs</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="myDerivateKernel.cl">
-      <Filter>Source Files</Filter>
-    </None>
-    <None Include="hello.cl">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Kernels</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="OpenCLHelper.h">
+    <ClInclude Include="openCLHelper.h">
       <Filter>Source Files\OpenCLHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="funcs.h">
+      <Filter>Source Files\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Source Files\Settings</Filter>
+    </ClInclude>
+    <ClInclude Include="kernFuncs.h">
+      <Filter>Source Files\KernFuncs</Filter>
+    </ClInclude>
+    <ClInclude Include="derivate.h">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

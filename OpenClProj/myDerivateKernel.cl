@@ -1,17 +1,15 @@
 
 
-__kernel  void calc_kernel(__global const  float* data, __global float* result, float const dx ){
+__kernel  void calc_kernel(__global const  float* data, __global float* result, float const dx , int const count){
 
+int index = get_local_size(0) * get_group_id(0) + get_local_id(0);
 
-
-
-int indexCurrent =  get_gloval_id(0); //get_local_size(0) * get_group_id(0) + get_local_id(0);
-
-if ( indexCurrent == get_global_size(0) ) {
-result[indexCurrent] = (data[indexCurrent] - data[indexCurrent-1]) / dx;
+if (index >= count-1 )
+result[index] = (data[index] - data[index-1]) / dx;
+else{
+if ( index == 0   )
+result[index] = (data[index + 1] - data[index]) / (dx);
+else 
+result[index] = (data[index + 1] - data[index - 1]) / (2*dx);
 }
-else {
-result[indexCurrent] = (data[indexCurrent + 1] - data[indexCurrent - 1]) / (2*dx);
-}
-
 }

@@ -142,18 +142,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="openCL.cpp" />
+    <ClCompile Include="kernFuncs.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="ConfigClass.cpp" />
-    <ClCompile Include="OpenCLHelper.cpp" />
-    <ClCompile Include="StientificFunctions.cpp" />
+    <ClCompile Include="config.cpp" />
+    <ClCompile Include="openCLHelper.cpp" />
+    <ClCompile Include="funcs.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="hello.cl" />
     <None Include="myDerivateKernel.cl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="OpenCLHelper.h" />
+    <ClInclude Include="config.h" />
+    <ClInclude Include="derivate.h" />
+    <ClInclude Include="funcs.h" />
+    <ClInclude Include="kernFuncs.h" />
+    <ClInclude Include="openCLHelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
