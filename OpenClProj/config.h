@@ -2,8 +2,8 @@
 
 
 
-int const VectorArraySize = 1000;   //1 << 14; //16*1024
-float const dx = 0.0001;
+int const VectorArraySize = 1 << 14; //16*1024
+float const dx = 1e-2;
 
 namespace scientificConfig {
 

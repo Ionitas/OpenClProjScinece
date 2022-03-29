@@ -55,5 +55,6 @@ std::vector<T> paralelDerivate(std::vector<T> vecDataSet) {
 
 		exit(1);
 	}
+
 	return resultParalel;
 }
