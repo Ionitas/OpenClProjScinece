@@ -142,7 +142,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="borderConditions.cpp" />
     <ClCompile Include="kernFuncs.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="config.cpp" />
@@ -151,16 +150,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="myDerivateKernel.cl" />
+    <None Include="mySecDerivateKernel.cl" />
     <None Include="myWaveEquation.cl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="config.h" />
-    <ClInclude Include="derivate.h" />
     <ClInclude Include="errorsCL.h" />
     <ClInclude Include="funcs.h" />
     <ClInclude Include="kernFuncs.h" />
     <ClInclude Include="openCLHelper.h" />
-    <ClInclude Include="waveNeviazka.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

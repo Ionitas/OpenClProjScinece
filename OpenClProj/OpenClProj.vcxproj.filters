@@ -45,15 +45,15 @@
     <ClCompile Include="kernFuncs.cpp">
       <Filter>Source Files\KernFuncs</Filter>
     </ClCompile>
-    <ClCompile Include="borderConditions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="myDerivateKernel.cl">
       <Filter>Source Files\Kernels</Filter>
     </None>
     <None Include="myWaveEquation.cl">
+      <Filter>Source Files\Kernels</Filter>
+    </None>
+    <None Include="mySecDerivateKernel.cl">
       <Filter>Source Files\Kernels</Filter>
     </None>
   </ItemGroup>
@@ -70,14 +70,8 @@
     <ClInclude Include="kernFuncs.h">
       <Filter>Source Files\KernFuncs</Filter>
     </ClInclude>
-    <ClInclude Include="derivate.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="errorsCL.h">
       <Filter>Source Files\OpenCLHelp</Filter>
-    </ClInclude>
-    <ClInclude Include="waveNeviazka.h">
-      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

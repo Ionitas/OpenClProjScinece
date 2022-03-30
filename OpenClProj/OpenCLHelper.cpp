@@ -12,7 +12,7 @@ cl::Program CreateProgram(const std::string& file) {
 	}
 
 	cl::Platform platform = all_platforms.front(); // Это и есть Nvidia - all_platforms[0]
-	std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << platform.getInfo<CL_PLATFORM_VERSION>() << "\n";
+	//std::cout << "Using platform: " << platform.getInfo<CL_PLATFORM_NAME>() << platform.getInfo<CL_PLATFORM_VERSION>() << "\n";
 
 	std::vector<cl::Device> devices;
 	platform.getDevices(CL_DEVICE_TYPE_ALL, &devices);
@@ -21,7 +21,7 @@ cl::Program CreateProgram(const std::string& file) {
 		std::cout << "No devices found!" << std::endl;
 	}
 	auto& device = devices.front();
-	std::cout << "Using device: " << device.getInfo<CL_DEVICE_NAME>() << std::endl; // Используем видеокарту у меня 940M
+	//std::cout << "Using device: " << device.getInfo<CL_DEVICE_NAME>() << std::endl; // Используем видеокарту у меня 940M
 
 
 	// Прочитать OpenCl kernel как строку 
