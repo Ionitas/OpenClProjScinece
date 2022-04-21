@@ -6,8 +6,9 @@
 #include <fstream>
 #include <vector>
 #include <iomanip>  
-#include "openCLHelper.h"
-#include "config.h"
+
+int const VectorArraySize = 1 << 14; //16*1024
+float const dx = 1e-2;
 
 
 struct WaveConditions {
@@ -28,17 +29,27 @@ namespace scientificFuncs {
 	float secondderivativeTestFunc(float x);
 
 	//паралельно считает произдодную
-	std::vector<float> paralelDerivate(std::vector<float> vecDataSet);
+	std::vector<float> paralelfirstDerivate(std::vector<float>& vecDataSet);
 
 	//паралельно считает 2 произдодную
-	std::vector<float> paralelSecDerivate(std::vector<float> vecDataSet);
+	std::vector<float> paralelSecDerivate(std::vector<float>& vecDataSet);
+
+
+	std::vector<float> paralel_first_derivateNonUniform(std::vector<float>& const f_z, std::vector<float>& const x_z);
+
+
+	std::vector<float> paralel_second_derivateNonUniform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz);
+
 
 	//подсчет невязки
-	std::vector<float> waveEquationCPU(std::vector<float> uDer2, std::vector<float> uDer1, std::vector<float> u, WaveConditions border);
+	std::vector<float> waveEquationCPU(std::vector<float>& uDer2, std::vector<float>& uDer1, std::vector<float>& u, WaveConditions border);
 
 
 	//подсчет невязки OpenCL
-	std::vector<float> waveEquationParalel(std::vector<float> uDer2, std::vector<float> uDer1, std::vector<float> u, WaveConditions border);
+	std::vector<float> waveEquationParalel(std::vector<float>& uDer2, std::vector<float>& uDer1, std::vector<float> &u, WaveConditions border);
+
+
+
 
 }
 
@@ -50,3 +61,6 @@ namespace helpFuncs {
 
 
 }
+
+
+

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -142,22 +142,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="kernFuncs.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="config.cpp" />
-    <ClCompile Include="openCLHelper.cpp" />
     <ClCompile Include="funcs.cpp" />
+    <ClCompile Include="openCLHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="myDerivateKernel.cl" />
-    <None Include="mySecDerivateKernel.cl" />
+    <None Include="myLinearKernel.cl" />
     <None Include="myWaveEquation.cl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="config.h" />
-    <ClInclude Include="errorsCL.h" />
     <ClInclude Include="funcs.h" />
-    <ClInclude Include="kernFuncs.h" />
     <ClInclude Include="openCLHelper.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -12,21 +12,4 @@
 #endif
 
 
-class ScinetificKernelFuncs{
-public: 
-	int count = 1;
-	int initData = 0;
-
-	ScinetificKernelFuncs(int count, int initData) {
-		count = count;
-		initData = initData;
-	}
-
-private:
-	std::vector<int> vecName();
-	
-	std::vector<int> initWithData(int count, int initData);
-
-};
-
 

@@ -1,8 +1,6 @@
 ﻿#include "openCLHelper.h"
 
 
-
-
 cl::Program CreateProgram(const std::string& file) {
 	std::vector<cl::Platform> all_platforms; //Найдти все плaтfормы поддерживаюшие OpenCl и использовать фронт то есть Nvidia
 	cl::Platform::get(&all_platforms);
@@ -45,3 +43,19 @@ cl::Program CreateProgram(const std::string& file) {
 
 	return program;
 }
+
+
+cl::Buffer CreateMixedBuffer(const std::vector<float> datas, cl::Context context) {
+	cl_int error_ret;
+
+	cl::Buffer buf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY  , datas.size() * sizeof(float), nullptr, &error_ret);
+	if (error_ret != CL_SUCCESS) {
+		std::cout << "Create buffer failed mixbuf: " << error_ret << std::endl;
+	}
+
+	return buf;
+}
+
+
+
+
