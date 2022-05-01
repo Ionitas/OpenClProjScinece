@@ -5,7 +5,7 @@ void helpFuncs::printFileData(std::string filename, std::vector<float> data, std
 	std::ofstream myfile;
 	myfile.open(filename);
 	for (int it = 0; it < data.size(); ++it) {
-		myfile << description << std::setprecision(5) << std::fixed << data[it] << std::endl;
+		myfile << description << std::setprecision(20) << std::fixed << data[it] << std::endl;
 	}
 	myfile << " End of file " << std::endl;
 	myfile.close();

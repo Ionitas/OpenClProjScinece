@@ -110,7 +110,7 @@
 	}
 
 	
-	std::vector<float> derivateFuncs::paralel_first_derivateNonUniform(std::vector<float>& const f_z, std::vector<float>&const x_z) {
+	std::vector<float> derivateFuncs::fxDerivateNonUNiform(std::vector<float>& const f_z, std::vector<float>&const x_z) {
 		
 		cl::Program program = CreateProgram("myLinearKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
@@ -173,7 +173,7 @@
 	}
 
 
-	std::vector<float> derivateFuncs::paralel_second_derivateNonUniform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz) {
+	std::vector<float> derivateFuncs::fxDer2NonUNiform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz) {
 		cl::Program program = CreateProgram("myLinearKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
 		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
@@ -459,7 +459,7 @@
 		error_ret = kernel.setArg(2, a);
 
 		if (error_ret != CL_SUCCESS) {
-			std::cout << "Kernel 2 arg " << error_ret << std::endl;
+			std::cout << "[heat]Kernel 2 arg " << error_ret << std::endl;
 		}
 
 
@@ -483,12 +483,25 @@
 		return dudtVec;
 	}
 
-	std::vector<float> equation::steaperHeatEquation( std::vector<float> d2u,std::vector<float> uu, float const dt) {
-		std::vector<float> temp(uu.size());
-		std::vector <float> heat = equation::heatEquation(d2u, settings::a);
+	std::vector<float> equation::steaperHeatEquation( std::vector<float>& xx,std::vector<float>& uu, float const dt) {
+		std::vector<float> nextUU(uu.size(),0);
+
+		std::vector <float> f_z = derivateFuncs::paralelfirstDerivate(uu);
+		std::vector <float> x_z = derivateFuncs::paralelfirstDerivate(xx);
+
+		std::vector <float> f_zz = derivateFuncs::paralelSecDerivate(uu);
+		std::vector <float> x_zz = derivateFuncs::paralelSecDerivate(xx);
+
+		std::vector<float> du = derivateFuncs::fxDerivateNonUNiform(f_z, x_z);
+		std::vector<float> d2u = derivateFuncs::fxDer2NonUNiform(f_zz, du, x_z, x_zz);
+
+		std::vector <float> dudt = equation::heatEquationParalel(d2u, settings::a);
+
+
 		for (int i = 0; i < uu.size(); i++) {
-			temp[i] = uu[i] + dt * heat[i];
+			nextUU[i] = uu[i] + dt * dudt[i];
 		}
+		return nextUU;
 	}
 
 

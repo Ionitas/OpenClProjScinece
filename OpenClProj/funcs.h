@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "settings.h"
-
+#include "helpers.h"
 
 
 namespace derivateFuncs {
@@ -12,10 +12,10 @@ namespace derivateFuncs {
 	std::vector<float> paralelSecDerivate(std::vector<float>& vecDataSet);
 
 	//Производная функций
-	std::vector<float> paralel_first_derivateNonUniform(std::vector<float>& const f_z, std::vector<float>& const x_z);
+	std::vector<float> fxDerivateNonUNiform(std::vector<float>& const f_z, std::vector<float>& const x_z);
 
 	//Вторая производная 
-	std::vector<float> paralel_second_derivateNonUniform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz);
+	std::vector<float> fxDer2NonUNiform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz);
 
 }
 
@@ -36,6 +36,6 @@ namespace equation {
 
 	std::vector<float> heatEquationParalel(std::vector<float> d2u, const float a);
 
-	std::vector<float> steaperHeatEquation( std::vector<float> xx, std::vector<float> uu, float const dt);
+	std::vector<float> steaperHeatEquation( std::vector<float>& xx, std::vector<float>& uu, float const dt);
 
 }
