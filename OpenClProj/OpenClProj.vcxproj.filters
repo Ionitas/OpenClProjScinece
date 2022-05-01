@@ -22,6 +22,9 @@
     <Filter Include="Source Files\OpenCLHelp">
       <UniqueIdentifier>{73fa4889-432d-43cf-9793-3a218f2572bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Settings">
+      <UniqueIdentifier>{47f88087-d1ac-416f-a80f-5b5efe1e9767}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -32,6 +35,12 @@
     </ClCompile>
     <ClCompile Include="openCLHelper.cpp">
       <Filter>Source Files\OpenCLHelp</Filter>
+    </ClCompile>
+    <ClCompile Include="funcs2d.cpp">
+      <Filter>Source Files\Functions</Filter>
+    </ClCompile>
+    <ClCompile Include="settings.cpp">
+      <Filter>Source Files\Settings</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +53,12 @@
     <None Include="myLinearKernel.cl">
       <Filter>Source Files\Kernels</Filter>
     </None>
+    <None Include="myMinDiff.cl">
+      <Filter>Source Files\Kernels</Filter>
+    </None>
+    <None Include="myEquations.cl">
+      <Filter>Source Files\Kernels</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="funcs.h">
@@ -51,6 +66,12 @@
     </ClInclude>
     <ClInclude Include="openCLHelper.h">
       <Filter>Source Files\OpenCLHelp</Filter>
+    </ClInclude>
+    <ClInclude Include="funcs2d.h">
+      <Filter>Source Files\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="settings.h">
+      <Filter>Source Files\Settings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

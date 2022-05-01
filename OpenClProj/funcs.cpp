@@ -2,22 +2,6 @@
 #include "funcs.h"
 #include "openCLHelper.h"
 	
-
-	//Функция для тестирования правильности алгоритма
-	float scientificFuncs::testFunc(float x) {
-		return x * x;//sin(x);
-	}
-
-	//Производная функций
-	float scientificFuncs::firstderivateTestFunc(float x) {
-		return cos(x);
-	}
-
-	//Вторая производная 
-	float scientificFuncs::secondderivativeTestFunc(float x) {
-		return -sin(x);
-	}
-
 	
 	//Функция берет и записывает в файл значение и описание
 	void helpFuncs::printFileData(std::string filename, std::vector<float> data , std::string description) {
@@ -32,13 +16,13 @@
 
 
 	//подсчет производной
-	std::vector<float> scientificFuncs::paralelfirstDerivate(std::vector<float>& vecDataSet) {
+	std::vector<float> derivateFuncs::paralelfirstDerivate(std::vector<float>& vecDataSet) {
 		cl::Program program = CreateProgram("myDerivateKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
 		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
 		auto& device = devices.front();
 
-		std::vector <float> resultParalel(VectorArraySize, 0.00);
+		std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
 
 
 		//Create Buffers 
@@ -48,7 +32,7 @@
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
 		}
-		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, VectorArraySize * sizeof(float), nullptr, &error_ret);
+		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY,settings:: VectorArraySize * sizeof(float), nullptr, &error_ret);
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Create buffer failed resulBuf: " << error_ret << std::endl;
 		}
@@ -67,14 +51,14 @@
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Kernel 1 arg " << error_ret << std::endl;
 		}
-		error_ret = kernel.setArg(2, dx);
+		error_ret = kernel.setArg(2, settings::dx);
 		error_ret = kernel.setArg(3, int(vecDataSet.size()));
 
 
 		// Выпоняем kernel функцию и получаем результат
 		cl::CommandQueue queue(context, device);
-		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(VectorArraySize));
-		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, VectorArraySize * sizeof(float), resultParalel.data());
+		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0,settings::VectorArraySize * sizeof(float), resultParalel.data());
 
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Error reading from buffer : resultParalelFirstDerivateData_buffer : " << error_ret << std::endl;
@@ -87,13 +71,13 @@
 
 
 	//подсчет 2 производной
-	std::vector<float> scientificFuncs::paralelSecDerivate(std::vector<float>& vecDataSet) {
+	std::vector<float> derivateFuncs::paralelSecDerivate(std::vector<float>& vecDataSet) {
 		cl::Program program = CreateProgram("myDerivateKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
 		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
 		auto& device = devices.front();
 
-		std::vector <float> resultParalel(VectorArraySize, 0.00);
+		std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
 
 
 		//Create Buffers 
@@ -103,7 +87,7 @@
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
 		}
-		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, VectorArraySize * sizeof(float), nullptr, &error_ret);
+		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY,settings::VectorArraySize * sizeof(float), nullptr, &error_ret);
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Create buffer failed resulBuf: " << error_ret << std::endl;
 		}
@@ -122,14 +106,14 @@
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Kernel 1 arg " << error_ret << std::endl;
 		}
-		error_ret = kernel.setArg(2, dx);
+		error_ret = kernel.setArg(2, settings::dx);
 		error_ret = kernel.setArg(3, int(vecDataSet.size()));
 
 
 		// Выпоняем kernel функцию и получаем результат
 		cl::CommandQueue queue(context, device);
-		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(VectorArraySize));
-		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, VectorArraySize * sizeof(float), resultParalel.data());
+		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0,settings::VectorArraySize * sizeof(float), resultParalel.data());
 
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Error reading from buffer : resultParalelFirstDerivateData_buffer : " << error_ret << std::endl;
@@ -141,14 +125,14 @@
 
 	
 	//Производная функций
-	std::vector<float> scientificFuncs::paralel_first_derivateNonUniform(std::vector<float>& const f_z, std::vector<float>&const x_z) {
+	std::vector<float> derivateFuncs::paralel_first_derivateNonUniform(std::vector<float>& const f_z, std::vector<float>&const x_z) {
 		
 		cl::Program program = CreateProgram("myLinearKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
 		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
 		auto& device = devices.front();
 
-		std::vector <float> resultParalel(VectorArraySize, 0.00);
+		std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
 
 
 		//Create Buffers 
@@ -164,7 +148,7 @@
 			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
 		}
 
-		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, VectorArraySize * sizeof(float), nullptr, &error_ret);
+		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, settings::VectorArraySize * sizeof(float), nullptr, &error_ret);
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Create buffer failed resulBuf: " << error_ret << std::endl;
 		}
@@ -192,8 +176,8 @@
 
 		// Выпоняем kernel функцию и получаем результат
 		cl::CommandQueue queue(context, device);
-		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(VectorArraySize));
-		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, VectorArraySize * sizeof(float), resultParalel.data());
+		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, settings::VectorArraySize * sizeof(float), resultParalel.data());
 
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Error reading from buffer : resultParalelFirstDerivateData_buffer : " << error_ret << std::endl;
@@ -204,18 +188,14 @@
 	}
 
 
-
-
-
-
 	//Вторая производная 
-	std::vector<float> scientificFuncs::paralel_second_derivateNonUniform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz) {
+	std::vector<float> derivateFuncs::paralel_second_derivateNonUniform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz) {
 		cl::Program program = CreateProgram("myLinearKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
 		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
 		auto& device = devices.front();
 
-		std::vector <float> resultParalel(VectorArraySize, 0.00);
+		std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
 
 
 		//Create Buffers 
@@ -244,7 +224,7 @@
 
 
 
-		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, VectorArraySize * sizeof(float), nullptr, &error_ret);
+		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, settings::VectorArraySize * sizeof(float), nullptr, &error_ret);
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Create buffer failed resulBuf: " << error_ret << std::endl;
 		}
@@ -280,8 +260,8 @@
 
 		// Выпоняем kernel функцию и получаем результат
 		cl::CommandQueue queue(context, device);
-		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(VectorArraySize));
-		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, VectorArraySize * sizeof(float), resultParalel.data());
+		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, settings::VectorArraySize * sizeof(float), resultParalel.data());
 
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Error reading from buffer : resultParalelFirstDerivateData_buffer : " << error_ret << std::endl;
@@ -290,99 +270,51 @@
 		}
 		return resultParalel;
 	}
+		
 	
-	
-	
-	
-	
-	//подсчет невязки 
-	std::vector<float> scientificFuncs::waveEquationCPU(std::vector<float>& uDer2, std::vector<float>& uDer1, std::vector<float>& u, WaveConditions border) {
-		//u'' + a*u' + b*u -c = g ;
-		// return g 
+	bool equation::checkStable1D(std::vector<float>& const vec, float tau, float a){
 
-		std::vector<float> g(uDer2.size());
-
-		for (int i = 0; i < uDer2.size(); i++) {
-			g[i] = uDer2[i] + border.a * uDer1[i] + border.b * u[i] - border.c;
-		}
-		helpFuncs::printFileData("waveFuncCPU.txt", g, "");
-		return g;
-	}
-
-
-
-	//подсчет невязки OpenCL
-	std::vector<float> scientificFuncs::waveEquationParalel(std::vector<float>&uDer2, std::vector<float>& uDer1, std::vector<float>& u, WaveConditions border) {
-		//u'' + a*u' + b*u -c = g ;
-		// return g 
-
-
-		cl::Program program = CreateProgram("myWaveEquation.cl");
+		cl::Program program = CreateProgram("myMinDiff.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
 		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
 		auto& device = devices.front();
 
-		std::vector<float> resultParalel(u.size(), 0.0);
+		std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
+
+
 		//Create Buffers 
 		cl_int error_ret;
 
-		cl::Buffer dataBuf(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR, sizeof(float) * u.size(), u.data(), &error_ret);
+		cl::Buffer dataBuf(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR, sizeof(float) * vec.size(), vec.data(), &error_ret);
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
 		}
-
-		cl::Buffer dataDer1Buf(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR, sizeof(float) * uDer1.size(), uDer1.data(), &error_ret);
-		if (error_ret != CL_SUCCESS) {
-			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
-		}
-
-		cl::Buffer dataDer2Buf(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR, sizeof(float) * uDer2.size(), uDer2.data(), &error_ret);
-		if (error_ret != CL_SUCCESS) {
-			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
-		}
-
-
-		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, resultParalel.size() * sizeof(float), nullptr, &error_ret);
+		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, settings::VectorArraySize * sizeof(float), nullptr, &error_ret);
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Create buffer failed resulBuf: " << error_ret << std::endl;
 		}
 
 
-
-
 		// выствляем аргументы Kernel
-		cl::Kernel kernel(program, "wave_kernel");
-		error_ret = kernel.setArg(0, dataDer2Buf);
+		cl::Kernel kernel(program, "minDiff");
+		error_ret = kernel.setArg(0, dataBuf);
 
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Kernel 0 arg " << error_ret << std::endl;
 		}
 
-		error_ret = kernel.setArg(1, dataDer1Buf);
+		error_ret = kernel.setArg(1, resulBuf);
 
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Kernel 1 arg " << error_ret << std::endl;
 		}
+		error_ret = kernel.setArg(2, int(vec.size()) - 1);
 
-		error_ret = kernel.setArg(2, dataBuf);
-
-		if (error_ret != CL_SUCCESS) {
-			std::cout << "Kernel 2 arg " << error_ret << std::endl;
-		}
-		error_ret = kernel.setArg(3, resulBuf);
-
-		if (error_ret != CL_SUCCESS) {
-			std::cout << "Kernel 3 arg " << error_ret << std::endl;
-		}
-
-		error_ret = kernel.setArg(4, border.a);
-		error_ret = kernel.setArg(5, border.b);
-		error_ret = kernel.setArg(6, border.c);
 
 		// Выпоняем kernel функцию и получаем результат
 		cl::CommandQueue queue(context, device);
-		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(u.size()));
-		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, resultParalel.size() * sizeof(float), resultParalel.data());
+		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, settings::VectorArraySize * sizeof(float), resultParalel.data());
 
 		if (error_ret != CL_SUCCESS) {
 			std::cout << "Error reading from buffer : resultParalelFirstDerivateData_buffer : " << error_ret << std::endl;
@@ -391,11 +323,105 @@
 		}
 
 
+		float min = resultParalel[0];
 
-		helpFuncs::printFileData("waveFuncParalel.txt", resultParalel, "");
-		return resultParalel;
+		for (int i = 1; i < resultParalel.size() - 1; i++) {
+			if (min > resultParalel[i]) min = resultParalel[i];
+		}
+		float coef = tau * pow((a / min), 2);
+		std::cout << "Stability coef = " << coef << std::endl;
+
+		if (coef < 0.5f)
+			return true;
+		else
+			return false;
+	}
+
+	
+	std::vector<float> equation::get_u_n(std::vector <float> u_n1, std::vector <float> u_n2, float tau, std::vector<float> f_res) {
+		std::vector<float> res(u_n1.size());
+
+		for (int i = 0; i < res.size(); i++) {
+			res[i] = (4 * u_n1[i] - 3 * u_n2[i] + 2 * tau * f_res[i]);
+		}
+
+		return res;
 	}
 
 
+	std::vector<float> equation::get_u_n_pararlel(std::vector <float>& u_n1, std::vector <float>& u_n2, float tau, std::vector<float>& f_res) {
+		cl::Program program = CreateProgram("myEquations.cl");
+		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
+		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
+		auto& device = devices.front();
 
+		std::vector <float> resultParalel(u_n1.size(), 0.00);
+
+
+		//Create Buffers 
+		cl_int error_ret;
+
+		cl::Buffer un1(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR, sizeof(float) * u_n1.size(), u_n1.data(), &error_ret);
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
+		}
+		cl::Buffer un2(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR, sizeof(float) * u_n2.size(), u_n2.data(), &error_ret);
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
+		}
+		cl::Buffer fres(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR, sizeof(float) * f_res.size(), f_res.data(), &error_ret);
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Create buffer failed vecDataSet: " << error_ret << std::endl;
+		}
+
+		cl::Buffer resulBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, settings::VectorArraySize * sizeof(float), nullptr, &error_ret);
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Create buffer failed resulBuf: " << error_ret << std::endl;
+		}
+
+
+		// выствляем аргументы Kernel
+		cl::Kernel kernel(program, "get_u_n");
+		error_ret = kernel.setArg(0, un1);
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Kernel 0 arg " << error_ret << std::endl;
+		}
+
+
+		error_ret = kernel.setArg(1, un2);
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Kernel 0 arg " << error_ret << std::endl;
+		}
+
+		error_ret = kernel.setArg(2, fres);
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Kernel 0 arg " << error_ret << std::endl;
+		}
+
+
+		error_ret = kernel.setArg(3, resulBuf);
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Kernel 1 arg " << error_ret << std::endl;
+		}
+		error_ret = kernel.setArg(2, tau);
+
+
+		// Выпоняем kernel функцию и получаем результат
+		cl::CommandQueue queue(context, device);
+		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+		error_ret = queue.enqueueReadBuffer(resulBuf, CL_TRUE, 0, settings::VectorArraySize * sizeof(float), resultParalel.data());
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Error reading from buffer : resultParalelFirstDerivateData_buffer : " << error_ret << std::endl;
+
+			exit(1);
+		}
+
+
+		return resultParalel;
+	}
 
