@@ -7,7 +7,6 @@
 #include <fstream>
 #include <iostream>
 
-
 namespace settings {
 	int const VectorArraySize = 101;// 1 << 14; //16*1024
 	float const dx = 1e-2;
@@ -24,5 +23,8 @@ namespace settings {
 	std::vector<float> InitGrid1D();
 
 	std::vector<float> InitData1D(std::vector<float>& vecData);
+
+	float gFunc(float const a, float t, float x, float const x0);
+
 
 }

@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="funcs2d.cpp" />
+    <ClCompile Include="helpers.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="funcs.cpp" />
     <ClCompile Include="openCLHelper.cpp" />
@@ -158,6 +159,7 @@
   <ItemGroup>
     <ClInclude Include="funcs.h" />
     <ClInclude Include="funcs2d.h" />
+    <ClInclude Include="helpers.h" />
     <ClInclude Include="openCLHelper.h" />
     <ClInclude Include="settings.h" />
   </ItemGroup>

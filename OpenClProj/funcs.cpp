@@ -3,19 +3,6 @@
 #include "openCLHelper.h"
 	
 	
-	//Функция берет и записывает в файл значение и описание
-	void helpFuncs::printFileData(std::string filename, std::vector<float> data , std::string description) {
-		std::ofstream myfile;
-		myfile.open(filename);
-		for (int it = 0; it < data.size(); ++it) {
-			myfile << description << std::setprecision(5) << std::fixed << data[it] << std::endl;
-		}
-		myfile << " End of file " << std::endl;
-		myfile.close();
-	}
-
-
-	//подсчет производной
 	std::vector<float> derivateFuncs::paralelfirstDerivate(std::vector<float>& vecDataSet) {
 		cl::Program program = CreateProgram("myDerivateKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
@@ -68,9 +55,8 @@
 
 		return resultParalel;
 	}
+	
 
-
-	//подсчет 2 производной
 	std::vector<float> derivateFuncs::paralelSecDerivate(std::vector<float>& vecDataSet) {
 		cl::Program program = CreateProgram("myDerivateKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
@@ -124,7 +110,6 @@
 	}
 
 	
-	//Производная функций
 	std::vector<float> derivateFuncs::paralel_first_derivateNonUniform(std::vector<float>& const f_z, std::vector<float>&const x_z) {
 		
 		cl::Program program = CreateProgram("myLinearKernel.cl");
@@ -188,7 +173,6 @@
 	}
 
 
-	//Вторая производная 
 	std::vector<float> derivateFuncs::paralel_second_derivateNonUniform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz) {
 		cl::Program program = CreateProgram("myLinearKernel.cl");
 		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
@@ -424,4 +408,89 @@
 
 		return resultParalel;
 	}
+
+	std::vector<float> equation::heatEquation(std::vector<float> const & d2u, const float a) {
+		std::vector <float> dudt (d2u.size(),0);
+		for (int i = 1; i < d2u.size()-1; i++) {
+			dudt[i] = pow(a, 2) * d2u[i];
+		} 
+		return dudt;
+	}
+
+	std::vector<float> equation::heatEquationParalel(std::vector<float> d2u, const float a) {
+		cl::Program program = CreateProgram("myEquations.cl");
+		cl::Context context = program.getInfo<CL_PROGRAM_CONTEXT>();
+		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
+		auto& device = devices.front();
+
+		std::vector <float> dudtVec(d2u.size(), 0.00);
+
+
+		//Create Buffers 
+		cl_int error_ret;
+
+		cl::Buffer d2uBuf(context, CL_MEM_READ_ONLY | CL_MEM_HOST_NO_ACCESS | CL_MEM_COPY_HOST_PTR, sizeof(float) * d2u.size(), d2u.data(), &error_ret);
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Create buffer failed d2u: " << error_ret << std::endl;
+		}
+		
+
+		cl::Buffer dudtBuf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY, dudtVec.size() * sizeof(float), nullptr, &error_ret);
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Create buffer failed dudt: " << error_ret << std::endl;
+		}
+
+
+		// выствляем аргументы Kernel
+		cl::Kernel kernel(program, "heat_calc");
+		error_ret = kernel.setArg(0, d2uBuf);
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Kernel 0 arg " << error_ret << std::endl;
+		}
+
+
+		error_ret = kernel.setArg(1, dudtBuf);
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Kernel 1 arg " << error_ret << std::endl;
+		}
+
+		error_ret = kernel.setArg(2, a);
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Kernel 2 arg " << error_ret << std::endl;
+		}
+
+
+		
+
+
+		// Выпоняем kernel функцию и получаем результат
+		cl::CommandQueue queue(context, device);
+		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+		error_ret = queue.enqueueReadBuffer(dudtBuf, CL_TRUE, 0, dudtVec.size() * sizeof(float), dudtVec.data());
+
+		if (error_ret != CL_SUCCESS) {
+			std::cout << "Error reading from buffer : resultParalelFirstDerivateData_buffer : " << error_ret << std::endl;
+
+			exit(1);
+		}
+
+		dudtVec[0] = 0;
+		dudtVec[dudtVec.size() - 1] = 0;
+
+		return dudtVec;
+	}
+
+	std::vector<float> equation::steaperHeatEquation( std::vector<float> d2u,std::vector<float> uu, float const dt) {
+		std::vector<float> temp(uu.size());
+		std::vector <float> heat = equation::heatEquation(d2u, settings::a);
+		for (int i = 0; i < uu.size(); i++) {
+			temp[i] = uu[i] + dt * heat[i];
+		}
+	}
+
+
+
 
