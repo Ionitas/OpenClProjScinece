@@ -11,6 +11,16 @@ void helpFuncs::printFileData(std::string filename, std::vector<float> data, std
 	myfile.close();
 }
 
+void helpFuncs::printData(std::string filename, std::vector<float> data) {
+	std::ofstream myfile;
+	myfile.open(filename);
+	for (int it = 0; it < data.size(); ++it) {
+		myfile << data[it] << ",";
+	}
+	std::cout << std::endl;
+	myfile.close();
+}
+
 
 void helpFuncs::exportDataToWrapper(std::vector<std::vector<float>>& const vecdata) {
 

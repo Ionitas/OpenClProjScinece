@@ -1,6 +1,7 @@
 ﻿#include "openCLHelper.h"
 
 
+
 cl::Program CreateProgram(const std::string& file) {
 	std::vector<cl::Platform> all_platforms; //Найдти все плaтfормы поддерживаюшие OpenCl и использовать фронт то есть Nvidia
 	cl::Platform::get(&all_platforms);
@@ -33,7 +34,7 @@ cl::Program CreateProgram(const std::string& file) {
 	cl::Context context(device);
 	cl::Program program(context, sources);
 
-	auto err = program.build("-cl-std=CL1.2");
+	auto err = program.build("-cl-std=CL3.0");
 	if (err != CL_BUILD_SUCCESS) {
 		std::cout << "Error!\n Build Status: " << program.getBuildInfo<CL_PROGRAM_BUILD_STATUS>(device)
 			<< "\nBuild Info :\t " << program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(device) << std::endl;
@@ -45,17 +46,34 @@ cl::Program CreateProgram(const std::string& file) {
 }
 
 
-cl::Buffer CreateMixedBuffer(const std::vector<float> datas, cl::Context context) {
+cl::Buffer CreateMixedBuffer( cl::Context context, std::string functionName) {
 	cl_int error_ret;
 
-	cl::Buffer buf(context, CL_MEM_WRITE_ONLY | CL_MEM_HOST_READ_ONLY  , datas.size() * sizeof(float), nullptr, &error_ret);
+	cl::Buffer buf(context, CL_MEM_READ_WRITE, settings::VectorArraySize * sizeof(float), nullptr, &error_ret);
 	if (error_ret != CL_SUCCESS) {
-		std::cout << "Create buffer failed mixbuf: " << error_ret << std::endl;
+		std::cout <<
+			" [ " << functionName << "]" << "Create buffer failed mixbuf: " << error_ret << std::endl;
 	}
 
 	return buf;
 }
 
 
+cl::Buffer CreateInitBuffer(cl::Context context, std::vector<float>& data, std::string functionnameError) {
+	cl_int error_ret;
 
+	cl::Buffer buf(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, settings::VectorArraySize * sizeof(float), data.data(), &error_ret);
+	if (error_ret != CL_SUCCESS) {
+		std::cout <<
+			" [ " << functionnameError << "]" << "Create buffer failed mixbuf: " << error_ret << std::endl;
+	}
 
+	return buf;
+
+}
+
+std::vector<float> getFromBuffer(cl::CommandQueue queue, cl::Buffer buf) {
+	std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
+	queue.enqueueReadBuffer(buf, CL_TRUE, 0, settings::VectorArraySize * sizeof(float), resultParalel.data());
+	return resultParalel;
+}

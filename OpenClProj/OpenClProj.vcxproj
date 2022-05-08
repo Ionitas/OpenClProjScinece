@@ -150,11 +150,7 @@
     <ClCompile Include="settings.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="myEquations.cl" />
-    <None Include="myMinDiff.cl" />
     <None Include="myDerivateKernel.cl" />
-    <None Include="myLinearKernel.cl" />
-    <None Include="myWaveEquation.cl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="funcs.h" />

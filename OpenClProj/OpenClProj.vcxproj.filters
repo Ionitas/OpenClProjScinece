@@ -53,18 +53,6 @@
     <None Include="myDerivateKernel.cl">
       <Filter>Source Files\Kernels</Filter>
     </None>
-    <None Include="myWaveEquation.cl">
-      <Filter>Source Files\Kernels</Filter>
-    </None>
-    <None Include="myLinearKernel.cl">
-      <Filter>Source Files\Kernels</Filter>
-    </None>
-    <None Include="myMinDiff.cl">
-      <Filter>Source Files\Kernels</Filter>
-    </None>
-    <None Include="myEquations.cl">
-      <Filter>Source Files\Kernels</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="funcs.h">

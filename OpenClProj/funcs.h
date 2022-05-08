@@ -2,20 +2,24 @@
 
 #include "settings.h"
 #include "helpers.h"
-
+#include "openCLHelper.h"
 
 namespace derivateFuncs {
+
+	cl::Buffer derivateParalel(cl::Program& program, cl::Context& context, cl::Buffer& vecDataSet , std::string errorName , std::string kernelName);
+
 	//паралельно считает произдодную
-	std::vector<float> paralelfirstDerivate(std::vector<float>& vecDataSet);
+	cl::Buffer paralelfirstDerivate(cl::Program& program, cl::Context& context, cl::Buffer& vecDataSet);
 
 	//паралельно считает 2 произдодную
-	std::vector<float> paralelSecDerivate(std::vector<float>& vecDataSet);
+	cl::Buffer paralelSecDerivate(cl::Program& program, cl::Context& context, cl::Buffer& vecDataSet);
+
 
 	//Производная функций
-	std::vector<float> fxDerivateNonUNiform(std::vector<float>& const f_z, std::vector<float>& const x_z);
+	cl::Buffer fxDerivateNonUNiform(cl::Program& program, cl::Context& context, cl::Buffer f_z, cl::Buffer x_z);
 
 	//Вторая производная 
-	std::vector<float> fxDer2NonUNiform(std::vector<float>& const f_zz, std::vector<float>& const f_x, std::vector<float>& const x_z, std::vector<float>& const x_zz);
+	cl::Buffer fxDer2NonUNiform(cl::Program& program, cl::Context& context, cl::Buffer f_zz, cl::Buffer f_x, cl::Buffer x_z, cl::Buffer x_zz);
 
 }
 
@@ -23,19 +27,20 @@ namespace derivateFuncs {
 
 
 namespace equation {
-	bool checkStable1D(std::vector<float>& const vec, float tau, float a);
+	bool checkStable1D(cl::Program& program, cl::Context& context, cl::Buffer vec, float tau, float a);
 
-	std::vector<float> get_u_n_pararlel(std::vector <float>& u_n1, std::vector <float>& u_n2, float tau, std::vector<float>& f_res);
 
 	std::vector<float> get_u_n(std::vector <float> u_n1, std::vector <float> u_n2, float tau, std::vector<float> f_res);
 
 	//  Heat transfer equation  
 	//  du / dt = a ^ 2 * d2u / dx ^ 2    
 	//  u[0], u[-1] = const
-	std::vector<float> heatEquation(std::vector<float> const& d2u, const float a);
+	//std::vector<float> heatEquation(std::vector<float> const& d2u, const float a);
 
-	std::vector<float> heatEquationParalel(std::vector<float> d2u, const float a);
 
-	std::vector<float> steaperHeatEquation( std::vector<float>& xx, std::vector<float>& uu, float const dt);
+	cl::Buffer nextUN(cl::Program& program, cl::Context& context, cl::Buffer& uu, cl::Buffer& dudt, float const dt);
+	cl::Buffer heatEquationParalel(cl::Program& program, cl::Context& context, cl::Buffer d2u, const float a);
+
+	cl::Buffer steaperHeatEquation(cl::Program& program, cl::Context& context, cl::Buffer& xx, cl::Buffer& uu, float const dt);
 
 }
