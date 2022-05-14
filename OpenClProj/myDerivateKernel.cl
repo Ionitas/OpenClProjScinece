@@ -3,7 +3,7 @@ __kernel  void first_dirivate(__global const float* data, __global float* result
 
 int index = get_local_size(0) * get_group_id(0) + get_local_id(0);
 
-if (index >= count-1)
+if (index == count)
 	result[index] = -(3*data[index-2] - 4*data[index-1] + data[index]) / (2*dx);
 else{
 	if ( index == 0)
@@ -19,11 +19,11 @@ __kernel  void second_derivate(__global const  float* data, __global float* resu
 
 int index = get_local_size(0) * get_group_id(0) + get_local_id(0);
 
-if (index >= count-1 )
+if (index == count-1 )
 	result[index] = (-data[index-3] + 4*data[index-2] - 5*data[index-1] +2*data[index])/(dx*dx);
 else{
-	if ( index < 1   )
-		result[index] = (2*data[index]-5*data[index+1] +4*data[index+2]-data[index+3])/(dx*dx);
+	if ( index ==0   )
+		result[index] = (2*data[index]-data[index+2])/(dx*dx);
 	else 
 		result[index] = (data[index+1] - 2*data[index] + data[index-1])/(dx*dx);
 	}
@@ -45,9 +45,19 @@ __kernel  void get_u_n(__global const float* u_n1, __global const float* u_n2, _
 
 
 
-__kernel  void heat_calc(__global const float* data, __global float* res, float const a) {
+__kernel  void heat_calc(__global const float* data, __global float* res, float const a, float const count) {
 	int index = get_local_size(0) * get_group_id(0) + get_local_id(0);
-	res[index] = a * a * data[index];
+
+	if (index == 0 )
+	res[index] = 0;
+else{
+	if ( index == count    )
+		res[index] = 0;
+	else 
+		res[index] = a * a * data[index];
+	
+}
+	
 }
 
 

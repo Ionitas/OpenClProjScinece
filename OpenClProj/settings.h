@@ -12,9 +12,9 @@
 #include <chrono>
 
 namespace settings {
-	int const VectorArraySize = 6001;// 1 << 14; //16*1024 = 1<<14
-	float const dx = 1e-2;
-	float const dt = 1e-2;
+	int const VectorArraySize = 101;// 1 << 14; //16*1024 = 1<<14
+	float const dx = 0.01f;// 1.0f / (VectorArraySize - 1);// 1e-2;
+	//float const dt = 1 / VectorArraySize;
 	float const a = 0.05;
 	float const tau = 0.005;
 	float const tsteps = 500;

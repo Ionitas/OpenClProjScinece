@@ -17,7 +17,7 @@ void helpFuncs::printData(std::string filename, std::vector<float> data) {
 	for (int it = 0; it < data.size(); ++it) {
 		myfile << data[it] << ",";
 	}
-	std::cout << std::endl;
+	myfile << " End of file " << std::endl;
 	myfile.close();
 }
 

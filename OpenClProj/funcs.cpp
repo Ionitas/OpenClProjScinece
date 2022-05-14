@@ -227,6 +227,8 @@ cl::Buffer equation::heatEquationParalel(cl::Program& program, cl::Context& cont
 	if (error_ret != CL_SUCCESS) {
 		std::cout << "[heat]Kernel 2 arg " << error_ret << std::endl;
 	}
+	error_ret = kernel.setArg(3, settings::VectorArraySize);
+
 
 	queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
 
