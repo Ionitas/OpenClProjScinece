@@ -2,16 +2,9 @@
 #include "funcs.h"
 #include "openCLHelper.h"
 
-cl::Buffer derivateFuncs::derivateParalel(cl::Program& program, cl::Context& context, cl::Buffer& vecDataSet, std::string errorName, std::string kernelName) {
-	std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
-	std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
-	auto& device = devices.front();
-	cl::CommandQueue queue(context, device);
-
+cl::Buffer derivateFuncs::derivateParalel(cl::Program& program, cl::Context context, cl::CommandQueue& queue, cl::Buffer& vecDataSet, std::string errorName, std::string kernelName) {
 	cl_int error_ret;
-
-	cl::Buffer resulBuf = CreateMixedBuffer(context, errorName);
-
+	cl::Buffer res = CreateMixedBuffer(context, "buffer");
 	// выствляем аргументы Kernel
 	cl::Kernel kernel(program, kernelName.data());
 	error_ret = kernel.setArg(0, vecDataSet);
@@ -20,112 +13,84 @@ cl::Buffer derivateFuncs::derivateParalel(cl::Program& program, cl::Context& con
 		std::cout << errorName << " - Kernel 0 arg " << error_ret << std::endl;
 	}
 
-	error_ret = kernel.setArg(1, resulBuf);
+	error_ret = kernel.setArg(1, res);
 
 	if (error_ret != CL_SUCCESS) {
-		std::cout << errorName << " - Kernel 1 arg " << error_ret << std::endl;
+		std::cout << errorName.data() << " - Kernel 1 arg " << error_ret << std::endl;
 	}
 	error_ret = kernel.setArg(2, settings::dx);
 	error_ret = kernel.setArg(3, settings::VectorArraySize);
 
 	queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
-	return resulBuf;
+	return res;
 }
 
-cl::Buffer derivateFuncs::paralelfirstDerivate(cl::Program& program, cl::Context& context, cl::Buffer& vecDataSet) {
-	return derivateParalel(program,context, vecDataSet, "paralelfirstDerivate" , "first_dirivate");
+cl::Buffer derivateFuncs::paralelfirstDerivate(cl::Program& program, cl::Context context, cl::CommandQueue& queue, cl::Buffer& vecDataSet) {
+	return derivateFuncs::derivateParalel(program,context,queue, vecDataSet, "paralelfirstDerivate" , "first_dirivate");
 }
 
-cl::Buffer derivateFuncs::paralelSecDerivate(cl::Program& program, cl::Context& context, cl::Buffer& vecDataSet) {
-	return derivateParalel(program, context, vecDataSet, "paralelSecDerivate", "second_derivate");
+cl::Buffer derivateFuncs::paralelSecDerivate(cl::Program& program, cl::Context context, cl::CommandQueue& queue, cl::Buffer& vecDataSet ) {
+	return derivateFuncs::derivateParalel(program,context, queue, vecDataSet, "paralelSecDerivate", "second_derivate");
 }
 	
-cl::Buffer derivateFuncs::fxDerivateNonUNiform(cl::Program& program, cl::Context& context, cl::Buffer f_z, cl::Buffer x_z) {
-		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
-		auto& device = devices.front();
-		cl::CommandQueue queue(context, device);
-
-		std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
-
-		cl_int error_ret;
-
-		cl::Buffer resulBuf = CreateMixedBuffer(context, "fxDerivateNonUNiform");
-
-
-		cl::Kernel kernel(program, "firstNonUnoformderivate");
-		error_ret = kernel.setArg(0, f_z);
-
-		if (error_ret != CL_SUCCESS) {
-			std::cout << " [firstNonUnoformderivate] Kernel 0 arg " << error_ret << std::endl;
-		}
-		error_ret = kernel.setArg(1, x_z);
-
-		if (error_ret != CL_SUCCESS) {
-			std::cout << " [firstNonUnoformderivate] Kernel 1 arg " << error_ret << std::endl;
-		}
-
-		error_ret = kernel.setArg(2, resulBuf);
-
-		if (error_ret != CL_SUCCESS) {
-			std::cout << " [firstNonUnoformderivate] Kernel 2 arg " << error_ret << std::endl;
-		}
-
-
-		
-		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
-
-
-		return resulBuf;
-	}
-
-cl::Buffer derivateFuncs::fxDer2NonUNiform(cl::Program& program, cl::Context& context, cl::Buffer f_zz, cl::Buffer f_x, cl::Buffer const x_z, cl::Buffer x_zz) {
-		std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
-		auto& device = devices.front();
-		cl::CommandQueue queue(context, device);
-
-		std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
-
-		cl_int error_ret;
-
-		cl::Buffer resulBuf=  CreateMixedBuffer(context, "fxDer2NonUNiform");
-
-
-		cl::Kernel kernel(program, "secondNonUnoformderivate");
-		error_ret = kernel.setArg(0, f_zz);
-		if (error_ret != CL_SUCCESS) {
-			std::cout << " [secondNonUnoformderivate] Kernel 0 arg " << error_ret << std::endl;
-		}
-		error_ret = kernel.setArg(1, f_x);
-		if (error_ret != CL_SUCCESS) {
-			std::cout << " [secondNonUnoformderivate] Kernel 1 arg " << error_ret << std::endl;
-		}
-		error_ret = kernel.setArg(2, x_z);
-		if (error_ret != CL_SUCCESS) {
-			std::cout << " [secondNonUnoformderivate] Kernel 2 arg " << error_ret << std::endl;
-		}
-		error_ret = kernel.setArg(3, x_zz);
-		if (error_ret != CL_SUCCESS) {
-			std::cout << " [secondNonUnoformderivate] Kernel 3 arg " << error_ret << std::endl;
-		}
-
-		error_ret = kernel.setArg(4, resulBuf);
-
-		if (error_ret != CL_SUCCESS) {
-			std::cout << " [secondNonUnoformderivate] Kernel 4 arg " << error_ret << std::endl;
-		}
-
-
-		
-		queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
-
-		return resulBuf;
-	}
-		
+cl::Buffer derivateFuncs::fxDerivateNonUNiform(cl::Program& program, cl::Context context, cl::CommandQueue& queue, cl::Buffer& f_z, cl::Buffer& x_z) {
+	cl_int error_ret;
+	cl::Buffer res = CreateMixedBuffer(context, "buffer");
+	cl::Kernel kernel(program, "firstNonUnoformderivate");
+	error_ret = kernel.setArg(0, f_z);
 	
-bool equation::checkStable1D(cl::Program& program, cl::Context& context, cl::Buffer vec, float tau, float a){
+	if (error_ret != CL_SUCCESS) {
+		std::cout << " [firstNonUnoformderivate] Kernel 0 arg " << error_ret << std::endl;
+	}
+	error_ret = kernel.setArg(1, x_z);
+	
+	if (error_ret != CL_SUCCESS) {
+		std::cout << " [firstNonUnoformderivate] Kernel 1 arg " << error_ret << std::endl;
+	}
+
+	error_ret = kernel.setArg(2, res);
+
+	if (error_ret != CL_SUCCESS) {
+		std::cout << " [firstNonUnoformderivate] Kernel 2 arg " << error_ret << std::endl;
+	}
+
+	queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+	return res;
+}
+
+cl::Buffer derivateFuncs::fxDer2NonUNiform(cl::Program& program, cl::Context context, cl::CommandQueue& queue, cl::Buffer f_zz, cl::Buffer& f_x, cl::Buffer& x_z, cl::Buffer& x_zz) {
+	cl_int error_ret;
+	cl::Buffer res = CreateMixedBuffer(context, "buffer");
+	cl::Kernel kernel(program, "secondNonUnoformderivate");
+	error_ret = kernel.setArg(0, f_zz);
+	if (error_ret != CL_SUCCESS) {
+		std::cout << " [secondNonUnoformderivate] Kernel 0 arg " << error_ret << std::endl;
+	}
+	error_ret = kernel.setArg(1, f_x);
+	if (error_ret != CL_SUCCESS) {
+		std::cout << " [secondNonUnoformderivate] Kernel 1 arg " << error_ret << std::endl;
+	}
+	error_ret = kernel.setArg(2, x_z);
+	if (error_ret != CL_SUCCESS) {
+		std::cout << " [secondNonUnoformderivate] Kernel 2 arg " << error_ret << std::endl;
+	}
+	error_ret = kernel.setArg(3, x_zz);
+	if (error_ret != CL_SUCCESS) {
+		std::cout << " [secondNonUnoformderivate] Kernel 3 arg " << error_ret << std::endl;
+	}
+	error_ret = kernel.setArg(4, res);
+
+	if (error_ret != CL_SUCCESS) {
+		std::cout << " [secondNonUnoformderivate] Kernel 4 arg " << error_ret << std::endl;
+	}
+	
+	queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
+	return res;
+}
+
+bool equation::checkStable1D(cl::Program& program, cl::Context& context, cl::Buffer &vec, float tau, float a){
 	std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
 	auto& device = devices.front();
-
 	std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
 
 	//Create Buffers 
@@ -177,37 +142,9 @@ bool equation::checkStable1D(cl::Program& program, cl::Context& context, cl::Buf
 		return false;
 	}
 
-	
-std::vector<float> equation::get_u_n(std::vector <float> u_n1, std::vector <float> u_n2, float tau, std::vector<float> f_res) {
-	std::vector<float> res(u_n1.size());
-
-	for (int i = 0; i < res.size(); i++) {
-		res[i] = (4 * u_n1[i] - 3 * u_n2[i] + 2 * tau * f_res[i]);
-	}
-
-	return res;
-}
-
-
-
-	/*std::vector<float> equation::heatEquation(std::vector<float> const & d2u, const float a) {
-		std::vector <float> dudt (d2u.size(),0);
-		for (int i = 1; i < d2u.size()-1; i++) {
-			dudt[i] = pow(a, 2) * d2u[i];
-		} 
-		return dudt;
-	}*/
-
-cl::Buffer equation::heatEquationParalel(cl::Program& program, cl::Context& context, cl::Buffer d2u, const float a) {
-	std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
-	auto& device = devices.front();
-	cl::CommandQueue queue(context, device);
-
-	//Create Buffers 
+cl::Buffer equation::heatEquationParalel(cl::Program& program, cl::Context context, cl::CommandQueue& queue, cl::Buffer d2u, const float a) {
 	cl_int error_ret;
-		
-	cl::Buffer dudtBuf = CreateMixedBuffer(context, "heatEquationParalel");
-
+	cl::Buffer res = CreateMixedBuffer(context, "buffer");
 
 	cl::Kernel kernel(program, "heat_calc");
 	error_ret = kernel.setArg(0, d2u);
@@ -216,7 +153,7 @@ cl::Buffer equation::heatEquationParalel(cl::Program& program, cl::Context& cont
 		std::cout << "Kernel 0 arg " << error_ret << std::endl;
 	}
 
-	error_ret = kernel.setArg(1, dudtBuf);
+	error_ret = kernel.setArg(1, res);
 
 	if (error_ret != CL_SUCCESS) {
 		std::cout << "Kernel 1 arg " << error_ret << std::endl;
@@ -229,20 +166,13 @@ cl::Buffer equation::heatEquationParalel(cl::Program& program, cl::Context& cont
 	}
 	error_ret = kernel.setArg(3, settings::VectorArraySize);
 
-
 	queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
-
-	return dudtBuf;
+	return res;
 }
 
-cl::Buffer equation::nextUN(cl::Program& program, cl::Context& context, cl::Buffer& uu, cl::Buffer& dudt, float const dt) {
-	std::vector<cl::Device> devices = context.getInfo<CL_CONTEXT_DEVICES>();
-	auto& device = devices.front();
-	cl::CommandQueue queue(context, device);
-
+cl::Buffer equation::nextUN(cl::Program& program, cl::Context context, cl::CommandQueue& queue, cl::Buffer& uu, cl::Buffer& dudt, float const dt) {
 	cl_int error_ret;
-	cl::Buffer rezBuf = CreateMixedBuffer(context, "nextUN");
-
+	cl::Buffer res = CreateMixedBuffer(context, "buffer");
 	cl::Kernel kernel(program, "nextun");
 	error_ret = kernel.setArg(0, uu);
 
@@ -255,7 +185,7 @@ cl::Buffer equation::nextUN(cl::Program& program, cl::Context& context, cl::Buff
 	if (error_ret != CL_SUCCESS) {
 		std::cout << "[nextun] Kernel 1 arg " << error_ret << std::endl;
 	}
-	error_ret = kernel.setArg(2, rezBuf);
+	error_ret = kernel.setArg(2, res);
 
 	if (error_ret != CL_SUCCESS) {
 		std::cout << "[nextun]Kernel 2 arg " << error_ret << std::endl;
@@ -267,26 +197,21 @@ cl::Buffer equation::nextUN(cl::Program& program, cl::Context& context, cl::Buff
 	}
 
 	queue.enqueueNDRangeKernel(kernel, cl::NullRange, cl::NDRange(settings::VectorArraySize));
-
-	return rezBuf;
-
-
-
+	return res;
 }
 
-cl::Buffer equation::steaperHeatEquation(cl::Program& program, cl::Context& context, cl::Buffer& xx, cl::Buffer& uu, float const dt) {
-
-	cl::Buffer f_z = derivateFuncs::paralelfirstDerivate(program, context,uu);
-	cl::Buffer x_z = derivateFuncs::paralelfirstDerivate(program, context,xx);
-	cl::Buffer f_zz = derivateFuncs::paralelSecDerivate(program, context, uu);
-	cl::Buffer x_zz = derivateFuncs::paralelSecDerivate(program, context, xx);
-
-	cl::Buffer du = derivateFuncs::fxDerivateNonUNiform(program, context, f_z, x_z);
-	cl::Buffer d2u = derivateFuncs::fxDer2NonUNiform(program, context, f_zz, du, x_z, x_zz);
+cl::Buffer equation::steaperHeatEquation(cl::Program& program, cl::Context context, cl::CommandQueue& queue, cl::Buffer& xx, cl::Buffer& uu, float const dt) {
 	
-	cl::Buffer dudt = equation::heatEquationParalel(program, context, d2u, settings::a);
+	cl::Buffer f_z = derivateFuncs::paralelfirstDerivate(program,context, queue,uu);
+	cl::Buffer x_z = derivateFuncs::paralelfirstDerivate(program,context, queue,xx);
+	cl::Buffer f_zz = derivateFuncs::paralelSecDerivate(program,context, queue, uu);
+	cl::Buffer x_zz = derivateFuncs::paralelSecDerivate(program,context ,queue, xx);
 
-	return equation::nextUN(program , context, uu, dudt, dt);
+	cl::Buffer du = derivateFuncs::fxDerivateNonUNiform(program,context, queue, f_z, x_z);
+	cl::Buffer d2u = derivateFuncs::fxDer2NonUNiform(program,context, queue, f_zz, du, x_z, x_zz);
+	
+	cl::Buffer heats = equation::heatEquationParalel(program,context, queue, d2u, settings::a);
+	return equation::nextUN(program,context, queue, uu, heats, dt);
 }
 
 

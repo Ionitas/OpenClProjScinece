@@ -34,13 +34,13 @@ std::vector<float> settings::InitData1D(float t,std::vector<float>&grid) {
 	return vecDataSet;
 }
 
-std::vector<float> settings::timesVector(float const dt, float t0, float tsteps) {
-	std::vector <float> temp;
-	for (int i = 0; i < tsteps; i++) {
-		temp.push_back(t0 + dt * tsteps);
-	}
-	return temp;	
-}
+//std::vector<float> settings::timesVector(float const dt, float t0, float tsteps) {
+//	std::vector <float> temp;
+//	for (int i = 0; i < tsteps; i++) {
+//		temp.push_back(t0 + dt * tsteps);
+//	}
+//	return temp;	
+//}
 
 float settings::gEdgefunc(float  t, float x, float  x0) {
 	return settings::gFunc(settings::a, t, x, x0) - settings::gFunc(settings::a, t, x, -x0) - settings::gFunc(settings::a, t, x, 2-x0);
