@@ -46,10 +46,10 @@ cl::Program CreateProgram(const std::string& file) {
 }
 
 
-cl::Buffer CreateMixedBuffer( cl::Context context, std::string functionName) {
+cl::Buffer CreateMixedBuffer( cl::Context context, std::string functionName, int size) {
 	cl_int error_ret;
 
-	cl::Buffer buf(context, CL_MEM_READ_WRITE, settings::VectorArraySize * sizeof(float), nullptr, &error_ret);
+	cl::Buffer buf(context, CL_MEM_READ_WRITE, size * sizeof(float), nullptr, &error_ret);
 	if (error_ret != CL_SUCCESS) {
 		std::cout <<
 			" [ " << functionName << "]" << "Create buffer failed mixbuf: " << error_ret << std::endl;
@@ -62,7 +62,7 @@ cl::Buffer CreateMixedBuffer( cl::Context context, std::string functionName) {
 cl::Buffer CreateInitBuffer(cl::Context context, std::vector<float>& data, std::string functionnameError) {
 	cl_int error_ret;
 
-	cl::Buffer buf(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, settings::VectorArraySize * sizeof(float), data.data(), &error_ret);
+	cl::Buffer buf(context, CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR, data.size()  * sizeof(float), data.data(), &error_ret);
 	if (error_ret != CL_SUCCESS) {
 		std::cout <<
 			" [ " << functionnameError << "]" << "Create buffer failed mixbuf: " << error_ret << std::endl;
@@ -72,8 +72,8 @@ cl::Buffer CreateInitBuffer(cl::Context context, std::vector<float>& data, std::
 
 }
 
-std::vector<float> getFromBuffer(cl::CommandQueue queue, cl::Buffer buf) {
-	std::vector <float> resultParalel(settings::VectorArraySize, 0.00);
-	queue.enqueueReadBuffer(buf, CL_TRUE, 0, settings::VectorArraySize * sizeof(float), resultParalel.data());
+std::vector<float> getFromBuffer(cl::CommandQueue queue, cl::Buffer buf , int size) {
+	std::vector <float> resultParalel(size, 0.00);
+	queue.enqueueReadBuffer(buf, CL_TRUE, 0, size * sizeof(float), resultParalel.data());
 	return resultParalel;
 }

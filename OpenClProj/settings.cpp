@@ -14,11 +14,10 @@ float settings::gFunc(float  a, float t, float x, float  x0) {
 	return 1.0f / (2 * a * pow(2 * acos(0) * t, 0.5)) * exp( - ((x-x0)*(x-x0))/(4*a*a*t)) ;
 }
 
+std::vector<float> settings::InitGrid1D(int size) {
+	std::vector <float> vecDataSet(size, 0.00);
 
-std::vector<float> settings::InitGrid1D() {
-	std::vector <float> vecDataSet(settings::VectorArraySize, 0.00);
-
-	for (int i = 0; i < vecDataSet.size(); i++) {
+	for (int i = 0; i <size; i++) {
 		vecDataSet[i] = settings::InitFunctionForNonUniforms(i * settings::dx);
 	}
 	return vecDataSet;
@@ -26,21 +25,13 @@ std::vector<float> settings::InitGrid1D() {
 
 std::vector<float> settings::InitData1D(float t,std::vector<float>&grid) {
 	int i = 0;
-	std::vector <float> vecDataSet(settings::VectorArraySize, 0.00);
+	std::vector <float> vecDataSet(grid.size(), 0.00);
 
 	for (int i = 0; i < vecDataSet.size(); i++) {
 		vecDataSet[i] = settings::testFunc(t, grid[i]);
 	}
 	return vecDataSet;
 }
-
-//std::vector<float> settings::timesVector(float const dt, float t0, float tsteps) {
-//	std::vector <float> temp;
-//	for (int i = 0; i < tsteps; i++) {
-//		temp.push_back(t0 + dt * tsteps);
-//	}
-//	return temp;	
-//}
 
 float settings::gEdgefunc(float  t, float x, float  x0) {
 	return settings::gFunc(settings::a, t, x, x0) - settings::gFunc(settings::a, t, x, -x0) - settings::gFunc(settings::a, t, x, 2-x0);

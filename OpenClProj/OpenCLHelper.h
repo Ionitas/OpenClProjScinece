@@ -15,8 +15,8 @@
 
 cl::Program CreateProgram(const std::string& file);
 
-cl::Buffer CreateMixedBuffer(cl::Context context, std::string functionName);
+cl::Buffer CreateMixedBuffer(cl::Context context, std::string functionName, int size);
 
 cl::Buffer CreateInitBuffer(cl::Context context, std::vector<float>& data, std::string functionnameError);
 
-std::vector<float> getFromBuffer(cl::CommandQueue queue, cl::Buffer buf);
+std::vector<float> getFromBuffer(cl::CommandQueue queue, cl::Buffer buf, int size);
